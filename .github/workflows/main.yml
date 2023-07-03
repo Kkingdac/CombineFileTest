@@ -1,0 +1,33 @@
+name: Build EXE
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [windows-latest]
+        python-version: [3.11]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirement.txt
+    - name: Build executable
+      run: |
+        pyinstaller -F -i merge-cells.ico -n Combine main.py
+      env:
+        PYTHONPATH: ${{ env.PYTHONPATH }}
