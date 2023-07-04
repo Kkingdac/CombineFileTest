@@ -49,7 +49,6 @@ def get_files(convert_folder: str, result_folder: str, backup_folder: str) -> li
 
 
 if __name__ == '__main__':
-    version = 'v 1.3.0'
     convert_path = config('convert_path')
     result_path = config('result_path')
     backup_path = config('backup_path')
