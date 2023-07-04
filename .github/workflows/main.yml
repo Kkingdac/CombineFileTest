@@ -4,19 +4,19 @@ on:
   push:
     branches: [ master ]
 
-env: 
-  os: "windows-latest"
-  python-version: "3.11"
-
 jobs: 
   build:
-    runs-on: ${{ env.os }}
+    strategy:
+      matrix: 
+        os: [ windows-latest ]
+        python-version: [ 3.11 ]
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python ${{ env.python-version }}
+      - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ env.python-version }}
+          python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -27,7 +27,10 @@ jobs:
         env:
           PYTHONPATH: ${{ env.PYTHONPATH }}
   Release:
-    runs-on: ${{ env.os }}
+    strategy:
+      matrix:
+        os: [ windows-latest ]
+    runs-on: ${{ matrix.os }}
     needs: build
     steps:
       - name: Create Release
