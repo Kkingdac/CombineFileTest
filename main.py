@@ -15,7 +15,7 @@ def create_ini() -> None:
         'convert_path': './Combine/',
         'result_path': './Result/',
         'backup_path': './Backup/',
-        'csv_to_excel': './CsvToExcel/',
+        'csv_to_excel': './CsvToExcel(M_Dim)/',
         'start_line': '24',
         'result_name': 'Result'
     }
@@ -49,7 +49,7 @@ def get_files(convert_folder: str, result_folder: str, backup_folder: str) -> li
 
 
 if __name__ == '__main__':
-    version = 'v 1.2.0'
+    version = 'v 1.3.0'
     convert_path = config('convert_path')
     result_path = config('result_path')
     backup_path = config('backup_path')
@@ -81,11 +81,13 @@ if __name__ == '__main__':
         finally:
             df.to_excel(f'{result_path}{timestamp}-{file_name}.xlsx', index=False)
             print('Combine Complete')
-    print('Convert Start')
+    csv_data = []
     for file in tqdm(get_files(convert_folder=csv_to_excel, result_folder=result_path, backup_folder=backup_path)):
         with open(f'{csv_to_excel}{file}', 'rb') as csv_file:
             encode = chardet.detect(csv_file.read())['encoding']
-        pd.read_csv(f'{csv_to_excel}{file}', encoding=encode)\
-            .to_excel(f'{result_path}{os.path.splitext(str(file))[0]}-{timestamp}.xlsx', index=False)
+        csv_data.append(pd.read_csv(f'{csv_to_excel}{file}', encoding=encode))
         shutil.move(f'{csv_to_excel}{file}', f'{backup_path}{timestamp}-{file}')
-    print('Convert Complete')
+    if csv_data:
+        print('Convert Start')
+        pd.concat(csv_data, axis=0).to_excel(f'{result_path}M_Dim{file_name}-{timestamp}.xlsx', index=False)
+        print('Convert Complete')
