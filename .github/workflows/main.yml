@@ -4,33 +4,30 @@ on:
   push:
     branches: [ master ]
 
-jobs:
+env: 
+  os: windows-latest
+  python-version: 3.11
+
+jobs: 
   build:
-
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      matrix:
-        os: [windows-latest]
-        python-version: [3.11]
-
+    runs-on: ${{ env.os }}
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-    - name: Build executable
-      run: |
-        pyinstaller -F -i merge-cells.ico -n Combiner-${{ github.run_id }} main.py
-      env:
-        PYTHONPATH: ${{ env.PYTHONPATH }}
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ env.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ env.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Build executable
+        run: |
+          pyinstaller -F -i merge-cells.ico -n Combiner-${{ github.run_id }} main.py
+        env:
+          PYTHONPATH: ${{ env.PYTHONPATH }}
   Release:
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ env.os }}
     needs: build
     steps:
       - name: Create Release
