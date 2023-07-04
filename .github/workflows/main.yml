@@ -28,6 +28,30 @@ jobs:
         pip install -r requirements.txt
     - name: Build executable
       run: |
-        pyinstaller -F -i merge-cells.ico -n Combine main.py
+        pyinstaller -F -i merge-cells.ico -n Combiner-${{ github.run_id }} main.py
       env:
         PYTHONPATH: ${{ env.PYTHONPATH }}
+  Release:
+    runs-on: ${{ matrix.os }}
+    needs: build
+    steps:
+      - name: Create Release
+        uses: actions/create-release@v1.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.run_id }}
+          release_name: Combiner-${{ github.run_id }}
+          body: ${{ github.event.head_commit.message }}
+          draft: false
+          prerelease: false
+      - name: Upload Asset To Release
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/Combiner-${{ github.run_id }}.exe
+          asset_name: Combiner-${{ github.run_id }}.exe
+          asset_content_type: application/octet-stream
+
