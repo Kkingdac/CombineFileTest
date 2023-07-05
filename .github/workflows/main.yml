@@ -39,7 +39,7 @@ jobs:
         env:
           GITHUB_TOKEN: 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
         with:
-          tag_name: ${{ github.ref }}
+          tag_name: Combiner
           release_name: Combiner-${{ github.run_id }}
           body: |
             Changes in this Release
