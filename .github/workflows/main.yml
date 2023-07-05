@@ -12,6 +12,9 @@ jobs:
         python-version: [ 3.11 ]
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Get Commit Title
+        id: get_commit_title
+        run: echo "::set-output name=title::$(git log --format=%B -n 1 | head -n 1)"
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
@@ -23,7 +26,7 @@ jobs:
           pip install -r requirements.txt
       - name: Build executable
         run: |
-          pyinstaller -F -i merge-cells.ico -n Combiner-${{ github.run_id }} main.py
+          pyinstaller -F -i merge-cells.ico -n Combiner-${{ steps.get_commit_title.outputs.title }} main.py
         env:
           PYTHONPATH: ${{ env.PYTHONPATH }}
       - name: Create Release
@@ -32,11 +35,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.Token }}
         with:
-          tag_name: ${{ github.run_id }}
-          release_name: Combiner-${{ github.run_id }}
-          body: |
-            Changes in this Release
-            ${{ github.event.head_commit.message }}
+          tag_name: ${{ steps.get_commit_title.outputs.title }}
+          release_name: Combiner-${{ steps.get_commit_title.outputs.title }}
+          body: ${{ github.event.head_commit.message }}
           draft: false
           prerelease: false
       - name: Upload Release Asset
@@ -46,7 +47,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.Token }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/Combiner-${{ github.run_id }}.exe
-          asset_name: Combiner-${{ github.run_id }}.exe
+          asset_path: ./dist/Combiner-${{ steps.get_commit_title.outputs.title }}.exe
+          asset_name: Combiner-${{ steps.get_commit_title.outputs.title }}.exe
           asset_content_type: application/octet-stream
 
