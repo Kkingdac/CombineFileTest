@@ -16,74 +16,61 @@ jobs:
         uses: devops-actions/action-get-tag@v1.0.2
         with:
           strip_v: false # Optional: Remove 'v' character from version
-          default: v1.3.15 # Optional: Default version when tag not found
-
-      - name: Use tag
-        run: echo ${{steps.tag.outputs.tag}}
-    outputs:
-      tag: ${{steps.tag.outputs.tag}}
-  Release:
-    needs: Get-Tag
-    strategy:
-      matrix:
-        os: [ ubuntu-latest ]
-    runs-on: ${{ matrix.os }}
-    env:
-      tag: ${{ needs.Get-Tag.outputs.tag }}
-    steps:
+          default: v1.3.16 # Optional: Default version when tag not found
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.Token }}
         with:
-          tag_name: ${{ env.tag }}
-          release_name: Combiner-${{ env.tag }}
+          tag_name: ${{ steps.tag.outputs.tag }}
+          release_name: Combiner-${{ steps.tag.outputs.tag }}
           body: ${{ github.event.head_commit.message }}
           draft: false
           prerelease: false
-#  build:
-#    strategy:
-#      matrix:
-#        os: [ windows-latest ]
-#        python-version: [ 3.11 ]
-#    runs-on: ${{ matrix.os }}
-#    steps:
-
-#          echo "::set-output name=title::${{first_line}}"
-#      - uses: actions/checkout@v2
-#      - name: Set up Python ${{ matrix.python-version }}
-#        uses: actions/setup-python@v2
-#        with:
-#          python-version: ${{ matrix.python-version }}
-#      - name: Install dependencies
-#        run: |
-#          python -m pip install --upgrade pip
-#          pip install -r requirements.txt
-#      - name: Build executable
-#        run: |
-#          pyinstaller -F -i merge-cells.ico -n Combiner-${{ steps.get_commit_title.outputs.title }} main.py
-#        env:
-#          PYTHONPATH: ${{ env.PYTHONPATH }}
-#      - name: Create Release
-#        id: create_release
-#        uses: actions/create-release@v1
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.Token }}
-#        with:
-#          tag_name: ${{ steps.get_commit_title.outputs.title }}
-#          release_name: Combiner-${{ steps.get_commit_title.outputs.title }}
-#          body: ${{ github.event.head_commit.message }}
-#          draft: false
-#          prerelease: false
-#      - name: Upload Release Asset
-#        id: upload_release_asset
-#        uses: actions/upload-release-asset@v1
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.Token }}
-#        with:
-#          upload_url: ${{ steps.create_release.outputs.upload_url }}
-#          asset_path: ./dist/Combiner-${{ steps.get_commit_title.outputs.title }}.exe
-#          asset_name: Combiner-${{ steps.get_commit_title.outputs.title }}.exe
-#          asset_content_type: application/octet-stream
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
+      url: ${{ steps.create_release.outputs.upload_url }}
+  Build:
+    strategy:
+      matrix:
+        os: [ windows-latest ]
+        python-version: [ 3.11 ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Build executable
+        run: |
+          pyinstaller -F -i merge-cells.ico -n Combiner-${{ needs.Get-Tag.outputs.tag }} main.py
+        env:
+          PYTHONPATH: ${{ env.PYTHONPATH }}
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.Token }}
+        with:
+          tag_name: ${{ needs.Get-Tag.outputs.tag }}
+          release_name: Combiner-${{ needs.Get-Tag.outputs.tag }}
+          body: ${{ github.event.head_commit.message }}
+          draft: false
+          prerelease: false
+      - name: Upload Release Asset
+        id: upload_release_asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.Token }}
+        with:
+          upload_url: ${{ needs.Get-Tag.outputs.url }}
+          asset_path: ./dist/Combiner-${{ needs.Get-Tag.outputs.tag }}.exe
+          asset_name: Combiner-${{ needs.Get-Tag.outputs.tag }}.exe
+          asset_content_type: application/octet-stream
 
