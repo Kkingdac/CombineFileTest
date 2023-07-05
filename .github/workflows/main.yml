@@ -18,10 +18,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           script: |
-            const { data } = await github.repos.getLatestRelease({
-              owner,
-              repo,
-            });
+            const { data } = await github.repos.getLatestRelease();
               
             const version = data.tag_name.replace(/^v/, '');
             const [major, minor, patch] = version.split('.').map(Number);
