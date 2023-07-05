@@ -12,27 +12,15 @@ jobs:
         python-version: [ 3.11 ]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Update version number
-        uses: actions/github-script@v4
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get tag
+        id: tag
+        uses: devops-actions/action-get-tag@v1.0.1
         with:
-          script: |
-            const { data } = await github.repos.getLatestRelease();
-              
-            const version = data.tag_name.replace(/^v/, '');
-            const [major, minor, patch] = version.split('.').map(Number);
-            const newVersion = `${major}.${minor}.${patch + 1}`;
-              
-            await github.repos.createRelease({
-              owner,
-              repo,
-              tag_name,
-              name,
-              body,
-              draft,
-              prerelease,
-            });
+          strip_v: true # Optional: Remove 'v' character from version
+          default: v0.0.0 # Optional: Default version when tag not found
+
+      - name: Use tag
+        run: echo ${{steps.tag.outputs.tag}}
 #          echo "::set-output name=title::${{first_line}}"
 #      - uses: actions/checkout@v2
 #      - name: Set up Python ${{ matrix.python-version }}
