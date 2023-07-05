@@ -24,7 +24,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        tag: ${{ needs.tag.outputs.tag }}
+        tag: ${{ needs.Get-Tag.outputs.tag }}
     runs-on: ${{ matrix.os }}
     needs: Get-Tag
     steps:
