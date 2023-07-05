@@ -34,22 +34,16 @@ jobs:
     needs: build
     steps:
       - name: Create Release
-        uses: actions/create-release@v1.0.0
+        id: create_release
+        uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.run_id }}
+          tag_name: ${{ github.ref }}
           release_name: Combiner-${{ github.run_id }}
-          body: ${{ github.event.head_commit.message }}
+          body: |
+            Changes in this Release
+            ${{ github.event.head_commit.message }}
           draft: false
           prerelease: false
-      - name: Upload Asset To Release
-        uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/Combiner-${{ github.run_id }}.exe
-          asset_name: Combiner-${{ github.run_id }}.exe
-          asset_content_type: application/octet-stream
 
