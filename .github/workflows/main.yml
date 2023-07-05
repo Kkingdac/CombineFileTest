@@ -5,11 +5,10 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  Get-Tag:
     strategy:
       matrix:
-        os: [ windows-latest ]
-        python-version: [ 3.11 ]
+        os: [ ubuntu-latest ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Get Tag
@@ -17,10 +16,36 @@ jobs:
         uses: devops-actions/action-get-tag@v1.0.2
         with:
           strip_v: false # Optional: Remove 'v' character from version
-          default: v0.0.0 # Optional: Default version when tag not found
+          default: v1.3.15 # Optional: Default version when tag not found
 
       - name: Use tag
         run: echo ${{steps.tag.outputs.tag}}
+  Release:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+        tag: ${{ needs.Get-Tag.steps.tag.outputs.tag }}
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.Token }}
+        with:
+          tag_name: ${{ matrix.tag }}
+          release_name: Combiner-${{ matrix.tag }}
+          body: ${{ github.event.head_commit.message }}
+          draft: false
+          prerelease: false
+#  build:
+#    strategy:
+#      matrix:
+#        os: [ windows-latest ]
+#        python-version: [ 3.11 ]
+#    runs-on: ${{ matrix.os }}
+#    steps:
+
 #          echo "::set-output name=title::${{first_line}}"
 #      - uses: actions/checkout@v2
 #      - name: Set up Python ${{ matrix.python-version }}
