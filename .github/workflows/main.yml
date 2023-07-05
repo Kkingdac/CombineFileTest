@@ -24,8 +24,9 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        tag: ${{ needs.Get-Tag.steps.tag.outputs.tag }}
+        tag: ${{ needs.tag.outputs.tag }}
     runs-on: ${{ matrix.os }}
+    needs: Get-Tag
     steps:
       - name: Create Release
         id: create_release
