@@ -20,6 +20,8 @@ jobs:
 
       - name: Use tag
         run: echo ${{steps.tag.outputs.tag}}
+    outputs:
+      tag: ${{steps.tag.outputs.tag}}
   Release:
     strategy:
       matrix:
