@@ -17,7 +17,7 @@ jobs:
         run: |
           first_line=$(echo $GITHUB_EVENT_HEAD_COMMIT_MESSAGE | head -n 1)  
           echo "::set-output name=title::$first_line"  
-          - run: echo "The title is $TITLE"
+      - run: echo "The title is $TITLE"
 #      - uses: actions/checkout@v2
 #      - name: Set up Python ${{ matrix.python-version }}
 #        uses: actions/setup-python@v2
