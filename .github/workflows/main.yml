@@ -10,12 +10,13 @@ jobs:
       matrix: 
         os: [ windows-latest ]
         python-version: [ 3.11 ]
-        version: ${{ (split('\n', ${{ github.event.head_commit.message }}))[0] }}
+        version: ${{ steps.get_commit_title.outputs.title }}
     runs-on: ${{ matrix.os }}
     steps:
       - name: Get Commit Title
         id: get_commit_title
-        run: echo ${{matrix.version}}
+        run: echo "::set-output name=title::$(echo $GITHUB_EVENT_HEAD_COMMIT_MESSAGE | head -n 1)"
+      - run: echo "$version"
 #      - uses: actions/checkout@v2
 #      - name: Set up Python ${{ matrix.python-version }}
 #        uses: actions/setup-python@v2
