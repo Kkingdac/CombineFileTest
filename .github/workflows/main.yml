@@ -12,7 +12,7 @@ jobs:
         python-version: [ 3.11 ]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Get tag
+      - name: Get Tag
         id: tag
         uses: devops-actions/action-get-tag@v1.0.1
         with:
