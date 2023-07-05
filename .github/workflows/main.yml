@@ -4,6 +4,9 @@ on:
   push:
     branches: [ master ]
 
+env:
+  tag: ${{ needs.Get-Tag.outputs.tag }}
+
 jobs:
   Get-Tag:
     strategy:
@@ -27,7 +30,6 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        tag: [ ${{ needs.Get-Tag.outputs.tag }} ]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Create Release
@@ -36,8 +38,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.Token }}
         with:
-          tag_name: ${{ matrix.tag }}
-          release_name: Combiner-${{ matrix.tag }}
+          tag_name: ${{ env.tag }}
+          release_name: Combiner-${{ env.tag }}
           body: ${{ github.event.head_commit.message }}
           draft: false
           prerelease: false
