@@ -29,7 +29,7 @@ jobs:
   Release:
     strategy:
       matrix:
-        os: [ windows-latest ]
+        os: [ windows-latest, windows-2019, ubuntu-latest, macos-13, macos-latest, macos-11 ]
     runs-on: ${{ matrix.os }}
     needs: build
     steps:
