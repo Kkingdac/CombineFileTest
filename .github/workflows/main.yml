@@ -13,19 +13,19 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-      - name: Build executable
-        run: |
-          pyinstaller -F -i merge-cells.ico -n Combiner-${{ github.run_id }} main.py
-        env:
-          PYTHONPATH: ${{ env.PYTHONPATH }}
+#      - name: Set up Python ${{ matrix.python-version }}
+#        uses: actions/setup-python@v2
+#        with:
+#          python-version: ${{ matrix.python-version }}
+#      - name: Install dependencies
+#        run: |
+#          python -m pip install --upgrade pip
+#          pip install -r requirements.txt
+#      - name: Build executable
+#        run: |
+#          pyinstaller -F -i merge-cells.ico -n Combiner-${{ github.run_id }} main.py
+#        env:
+#          PYTHONPATH: ${{ env.PYTHONPATH }}
   Release:
     strategy:
       matrix:
@@ -37,7 +37,7 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.Full-Token }}
+          GITHUB_TOKEN: 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
         with:
           tag_name: ${{ github.ref }}
           release_name: Combiner-${{ github.run_id }}
