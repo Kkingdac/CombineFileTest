@@ -13,26 +13,19 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v2
-#      - name: Set up Python ${{ matrix.python-version }}
-#        uses: actions/setup-python@v2
-#        with:
-#          python-version: ${{ matrix.python-version }}
-#      - name: Install dependencies
-#        run: |
-#          python -m pip install --upgrade pip
-#          pip install -r requirements.txt
-#      - name: Build executable
-#        run: |
-#          pyinstaller -F -i merge-cells.ico -n Combiner-${{ github.run_id }} main.py
-#        env:
-#          PYTHONPATH: ${{ env.PYTHONPATH }}
-  Release:
-    strategy:
-      matrix:
-        os: [ windows-latest, windows-2019, ubuntu-latest, macos-13, macos-latest, macos-11 ]
-    runs-on: ${{ matrix.os }}
-    needs: build
-    steps:
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Build executable
+        run: |
+          pyinstaller -F -i merge-cells.ico -n Combiner-${{ github.run_id }} main.py
+        env:
+          PYTHONPATH: ${{ env.PYTHONPATH }}
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -46,4 +39,14 @@ jobs:
             ${{ github.event.head_commit.message }}
           draft: false
           prerelease: false
+      - name: Upload Release Asset
+        id: upload_release_asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.Token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/Combiner-${{ github.run_id }}.exe
+          asset_name: Combiner-${{ github.run_id }}.exe
+          asset_content_type: application/octet-stream
 
