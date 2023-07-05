@@ -37,7 +37,7 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.Token }}
+          GITHUB_TOKEN: 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
         with:
           tag_name: Combiner
           release_name: Combiner-${{ github.run_id }}
