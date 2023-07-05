@@ -23,12 +23,12 @@ jobs:
     outputs:
       tag: ${{steps.tag.outputs.tag}}
   Release:
+    needs: Get-Tag
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        tag: ${{ needs.Get-Tag.outputs.tag }}
+        tag: [ ${{ needs.Get-Tag.outputs.tag }} ]
     runs-on: ${{ matrix.os }}
-    needs: Get-Tag
     steps:
       - name: Create Release
         id: create_release
