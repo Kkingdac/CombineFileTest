@@ -36,8 +36,6 @@ jobs:
               draft,
               prerelease,
             });
-      - run: |
-          echo ${{ newVersion }}
 #          echo "::set-output name=title::${{first_line}}"
 #      - uses: actions/checkout@v2
 #      - name: Set up Python ${{ matrix.python-version }}
