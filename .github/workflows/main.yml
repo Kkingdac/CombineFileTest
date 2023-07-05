@@ -10,7 +10,7 @@ jobs:
       matrix: 
         os: [ windows-latest ]
         python-version: [ 3.11 ]
-        version: ${{ steps.split_title.outputs.title }}
+#        version: ${{ steps.split_title.outputs.title }}
     runs-on: ${{ matrix.os }}
     steps:
       - name: split_title
