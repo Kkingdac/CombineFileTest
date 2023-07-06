@@ -19,38 +19,35 @@ jobs:
           default: v1.3.16 # Optional: Default version when tag not found
       - name: cal tag
         id: version
-        uses: actions/javascript-action@v1
-        with:
-          milliseconds: 1000
-          main: |
-            let tag = ${{ steps.tag.outputs.tag }}
-            let [major, minor, patch] = tag.split('.').map(Number)
-            const in_label = ${{ github.event.pull_request.labels }}
-            const actions = {
-              'bug': function () {
-                ++patch
-              },
-              'enhancement': function () {
-                ++minor
-                patch = 0
-              }
+        run: |
+          let tag = ${{ steps.tag.outputs.tag }}
+          let [major, minor, patch] = tag.split('.').map(Number)
+          const in_label = ${{ github.event.pull_request.labels }}
+          const actions = {
+            'bug': () => {
+              ++patch
+            },
+            'enhancement': () => {
+              ++minor
+              patch = 0
             }
-            actions[in_label]()
-            const version = `v${major}.${minor}.${patch}`
-            console.log(`::set-output name=version::${version}`)
-        
+          }
+          actions[in_label]()
+          const version = `v${major}.${minor}.${patch}`
+          core.setOutput("version", version)
+    
 
     #      - name: Create Release
-#        id: create_release
-#        uses: actions/create-release@v1
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.Token }}
-#        with:
-#          tag_name: ${{ steps.tag.outputs.tag }}
-#          release_name: Combiner-${{ steps.tag.outputs.tag }}
-#          body: ${{ github.event.head_commit.message }}
-#          draft: false
-#          prerelease: false
+    #        id: create_release
+    #        uses: actions/create-release@v1
+    #        env:
+    #          GITHUB_TOKEN: ${{ secrets.Token }}
+    #        with:
+    #          tag_name: ${{ steps.tag.outputs.tag }}
+    #          release_name: Combiner-${{ steps.tag.outputs.tag }}
+    #          body: ${{ github.event.head_commit.message }}
+    #          draft: false
+    #          prerelease: false
     outputs:
       tag: ${{ steps.version.outputs.version }}
       url: ${{ steps.create_release.outputs.upload_url }}
