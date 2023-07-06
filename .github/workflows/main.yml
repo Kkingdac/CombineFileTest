@@ -55,11 +55,12 @@ jobs:
       url: ${{ steps.create_release.outputs.upload_url }}
   test:
     needs: Get-Tag
-    runs-on: "ubuntu-latest"
+    strategy:
+      matrix:
+        os: [ ubuntu-latest ]
+    runs-on: ${{ matrix.os }}
     steps:
       - run: |
-          echo ${{ github.event.pull_request.labels }}
-          echo ${{ needs.Get-Tag.outputs.tag }}
           echo ${{ github.event.pull_request.labels }}
 
 #  Build:
