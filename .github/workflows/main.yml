@@ -19,10 +19,10 @@ jobs:
           default: v1.3.16 # Optional: Default version when tag not found
       - name: cal tag
         id: version
-        uses: actions/github-script@v6
+        uses: actions/javascript-action@v1
         with:
           script: |
-            const tag = '1.3.16'
+            const tag = ${{ steps.tag.outputs.tag }}
             let [major, minor, patch] = tag.split('.').map(Number)
             const in_label = ${{ github.event.pull_request.labels }}
             const actions = {
