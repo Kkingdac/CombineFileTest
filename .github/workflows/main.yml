@@ -62,7 +62,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - run: |
-          echo ${{ toJSON }}
+          echo ${{ github.event.pull_request.labels }}
 
 #  Build:
 #    strategy:
