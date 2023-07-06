@@ -12,7 +12,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: checkout code
-        uses: actions checkout@v2
+        uses: actions/checkout@v2
       - name: Get Tag
         id: tag
         uses: devops-actions/action-get-tag@v1.0.2
