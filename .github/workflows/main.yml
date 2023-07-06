@@ -24,7 +24,7 @@ jobs:
           script: |
             const tag = '1.3.16'
             let [major, minor, patch] = tag.split('.').map(Number)
-            const in_label = 'bug'
+            const in_label = ${{ github.event.pull_request.labels }}
             const actions = {
               'bug': function () {
                 ++patch
@@ -35,7 +35,8 @@ jobs:
               }
             }
             actions[in_label]()
-            const version = `${major}.${minor}.${patch}`
+            const version = `v${major}.${minor}.${patch}`
+            console.log(`::set-output name=version::${version}`)
         
 
     #      - name: Create Release
@@ -50,7 +51,7 @@ jobs:
 #          draft: false
 #          prerelease: false
     outputs:
-      tag: ${{ steps.tag.outputs.next_version }}
+      tag: ${{ steps.version.outputs.version }}
       url: ${{ steps.create_release.outputs.upload_url }}
   test:
     needs: Get-Tag
