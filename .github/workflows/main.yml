@@ -24,9 +24,9 @@ jobs:
           tag: ${{ steps.tag.outputs.tag }}
           label: ${{ join(' ', github.event.pull_request.labels.*.name) }}
         run: |
-          echo ${{ toJSON(github) }}
-          version=$(node version.js ${{ env.tag }} ${{ env.label }})
-          echo $result
+          echo $GITHUB_EVENT_PATH
+#          version=$(node version.js ${{ env.tag }} ${{ env.label }})
+#          echo $result
 
     #      - name: Create Release
     #        id: create_release
