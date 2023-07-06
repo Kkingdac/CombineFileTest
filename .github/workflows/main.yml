@@ -21,7 +21,7 @@ jobs:
         id: version
         uses: actions/javascript-action@v1
         with:
-          script: |
+          main: |
             let tag = ${{ steps.tag.outputs.tag }}
             let [major, minor, patch] = tag.split('.').map(Number)
             const in_label = ${{ github.event.pull_request.labels }}
