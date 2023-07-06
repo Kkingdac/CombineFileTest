@@ -1,7 +1,7 @@
 name: Build EXE
 
 on:
-  push:
+  pull_request:
     branches: [ master ]
 
 jobs:
@@ -21,19 +21,37 @@ jobs:
 #          default: v1.3.16 # Optional: Default version when tag not found
 #      - name: Install JQ
 #        run: sudo apt-get install jq
-      - name: cal tag
-        env:
-          tag: ${{ steps.tag.outputs.tag }}
-        run: |
-          PR_NUMBER=${{ github.event.pull_request.number }}
-          API_URL="https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}"
-          TOKEN=${{ secrets.Token }}
-          LABELS=$(curl -X GET -sSL -H "Authorization: Bearer $TOKEN" $API_URL | jq -r '.labels[]?.name')
-          echo "::set-output name=labels::$LABELS"
+#      - name: cal tag
+#        env:
+#          tag: ${{ steps.tag.outputs.tag }}
+#        run: |
+#          query='query {
+#            repository(owner:${{ github.repository_owner }}, name:${{ github.repository }}) {
+#              pullRequest(number:<PR_NUMBER>) {
+#                labels(first: 100) {
+#                  nodes {
+#                    name
+#                  }
+#                }
+#              }
+#            }
+#          }'
+#
+#          query="${query//<OWNER>/${{ github.repository_owner }}}}"
+#          query="${query//<REPO>/${{ github.repository }}}}"
+#          query="${query//<PR_NUMBER>/${{ github.event.pull_request.number }}}}"
+#
+#          response=$(curl -X POST -sSL \
+#            -H "Authorization: bearer $GITHUB_TOKEN" \
+#            -H "Accept: application/vnd.github.v3+json            -d "{\"query\": \"$query\"}" \
+#            https://api.github.com/graphql)
+#
+#          labels=$(echo "$response" | jq -r '.data.repository.pullRequest.labels.nodes[].name')
+#          echo "::set-output name=labels::$labels"
 
       - name: Print labels
         run: |
-          echo "Pull Request labels: ${{ steps.labels.outputs.labels }}"
+          echo ${{ toJSON(github) }}
 #          version=$(node version.js ${{ env.tag }} ${{ env.label }})
 #          echo $result
 
