@@ -25,7 +25,15 @@ jobs:
         env:
           tag: ${{ steps.tag.outputs.tag }}
         run: |
-          echo "::set-output name=labels::${{ join(github.event.pull_request.labels.*.name, ', ') }}"
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          API_URL="https://api.github.com/repos/${{ github.repository }}/pulls/${PR_NUMBER}"
+          TOKEN=${{ secrets.Token }}
+          LABELS=$(curl -X GET -sSL -H "Authorization: Bearer $TOKEN" $API_URL | jq -r '.labels[]?.name')
+          echo "::set-output name=labels::$LABELS"
+
+      - name: Print labels
+        run: |
+          echo "Pull Request labels: ${{ steps.labels.outputs.labels }}"
 #          version=$(node version.js ${{ env.tag }} ${{ env.label }})
 #          echo $result
 
