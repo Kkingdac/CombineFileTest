@@ -22,7 +22,7 @@ jobs:
       - name: cal tag
         env:
           tag: ${{ steps.tag.outputs.tag }}
-          label: ${{ github.event.pull_request.labels.*.name }}
+          label: ${{ github.event.pull_request.labels.0.name }}
         run: |
           version=$(node version.js ${{ env.tag }} ${{ env.label }})
           echo $result
