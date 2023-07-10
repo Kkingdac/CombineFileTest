@@ -49,26 +49,7 @@ jobs:
 #          labels=$(echo "$response" | jq -r '.data.repository.pullRequest.labels.nodes[].name')
 #          echo "::set-output name=labels::$labels"
 
-#      - name: Print labels
-#        run: |
-#          echo ${{ toJSON(github) }}
-#          version=$(node version.js ${{ env.tag }} ${{ env.label }})
-#          echo $result
 
-    #      - name: Create Release
-    #        id: create_release
-    #        uses: actions/create-release@v1
-    #        env:
-    #          GITHUB_TOKEN: ${{ secrets.Token }}
-    #        with:
-    #          tag_name: ${{ steps.tag.outputs.tag }}
-    #          release_name: Combiner-${{ steps.tag.outputs.tag }}
-    #          body: ${{ github.event.head_commit.message }}
-    #          draft: false
-    #          prerelease: false
-#    outputs:
-#      tag: ${{ steps.version.outputs.version }}
-#      url: ${{ steps.create_release.outputs.upload_url }}
 #  test:
 #    needs: Get-Tag
 #    strategy:
