@@ -2,7 +2,8 @@ name: Build EXE
 
 on:
   push:
-    branches: [ master ]
+    tags:
+      - 'v*'
 
 jobs:
   Get-Tag:
@@ -13,8 +14,10 @@ jobs:
     steps:
       - name: checkout code
         uses: actions/checkout@v2
+        with:
+          ref: ${{ env.GITHUB_TAG }}
       - name: Get Tag
         id: tag
         run: |
-          echo ${{ toJSON(github) }}
+          echo ${{ github.ref_name }}
 
