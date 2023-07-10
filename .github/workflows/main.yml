@@ -19,5 +19,5 @@ jobs:
       - name: Get Tag
         id: tag
         run: |
-          echo ${{ github.ref }}
+          echo ${{ github.ref_name }}
 
