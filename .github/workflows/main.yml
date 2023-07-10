@@ -44,7 +44,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.Token }}
         with:
-          upload_url: ${{ steps.create_release.outputs.url }}
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./dist/Combiner-${{ github.ref_name }}.exe
           asset_name: Combiner-${{ github.ref_name }}.exe
           asset_content_type: application/octet-stream
