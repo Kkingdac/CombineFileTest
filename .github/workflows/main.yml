@@ -19,5 +19,5 @@ jobs:
       - name: Get Tag
         id: tag
         run: |
-          echo ${{ env.GITHUB_TAG }}
+          echo ${{ toJSON(env) }}
 
