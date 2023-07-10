@@ -5,120 +5,16 @@ on:
     branches: [ master ]
 
 jobs:
-#  Get-Tag:
-#    strategy:
-#      matrix:
-#        os: [ ubuntu-latest ]
-#    runs-on: ${{ matrix.os }}
-#    steps:
-#      - name: checkout code
-#        uses: actions/checkout@v2
-#      - name: Get Tag
-#        id: tag
-#        uses: devops-actions/action-get-tag@v1.0.2
-#        with:
-#          strip_v: true # Optional: Remove 'v' character from version
-#          default: v1.3.16 # Optional: Default version when tag not found
-#      - name: Install JQ
-#        run: sudo apt-get install jq
-#      - name: cal tag
-#        env:
-#          tag: ${{ steps.tag.outputs.tag }}
-#        run: |
-#          query='query {
-#            repository(owner:${{ github.repository_owner }}, name:${{ github.repository }}) {
-#              pullRequest(number:<PR_NUMBER>) {
-#                labels(first: 100) {
-#                  nodes {
-#                    name
-#                  }
-#                }
-#              }
-#            }
-#          }'
-#
-#          query="${query//<OWNER>/${{ github.repository_owner }}}}"
-#          query="${query//<REPO>/${{ github.repository }}}}"
-#          query="${query//<PR_NUMBER>/${{ github.event.pull_request.number }}}}"
-#
-#          response=$(curl -X POST -sSL \
-#            -H "Authorization: bearer $GITHUB_TOKEN" \
-#            -H "Accept: application/vnd.github.v3+json            -d "{\"query\": \"$query\"}" \
-#            https://api.github.com/graphql)
-#
-#          labels=$(echo "$response" | jq -r '.data.repository.pullRequest.labels.nodes[].name')
-#          echo "::set-output name=labels::$labels"
-
-#      - name: Print labels
-#        run: |
-#          echo ${{ toJSON(github) }}
-#          version=$(node version.js ${{ env.tag }} ${{ env.label }})
-#          echo $result
-
-    #      - name: Create Release
-    #        id: create_release
-    #        uses: actions/create-release@v1
-    #        env:
-    #          GITHUB_TOKEN: ${{ secrets.Token }}
-    #        with:
-    #          tag_name: ${{ steps.tag.outputs.tag }}
-    #          release_name: Combiner-${{ steps.tag.outputs.tag }}
-    #          body: ${{ github.event.head_commit.message }}
-    #          draft: false
-    #          prerelease: false
-#    outputs:
-#      tag: ${{ steps.version.outputs.version }}
-#      url: ${{ steps.create_release.outputs.upload_url }}
-#  test:
-#    needs: Get-Tag
-#    strategy:
-#      matrix:
-#        os: [ ubuntu-latest ]
-#    runs-on: ${{ matrix.os }}
-#    steps:
-#      - run: |
-#          echo ${{ github.event.pull_request.labels }}
-
-  Build:
+  Get-Tag:
     strategy:
       matrix:
-        os: [ windows-latest ]
-        python-version: [ 3.11 ]
+        os: [ ubuntu-latest ]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
+      - name: checkout code
+        uses: actions/checkout@v2
+      - name: Get Tag
+        id: tag
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-      - name: Build executable
-        run: |
-          pyinstaller -F -i merge-cells.ico -n Combiner-${{ github.run_id }} main.py
-        env:
-          PYTHONPATH: ${{ env.PYTHONPATH }}
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.Token }}
-        with:
-          tag_name: ${{ github.run_id }}
-          release_name: Combiner-${{ github.run_id }}
-          body: ${{ github.event.head_commit.message }}
-          draft: false
-          prerelease: false
-      - name: Upload Release Asset
-        id: upload_release_asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.Token }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/Combiner-${{ github.run_id }}.exe
-          asset_name: Combiner-${{ github.run_id }}.exe
-          asset_content_type: application/octet-stream
+          echo ${{ env.GITHUB_TAG }}
 

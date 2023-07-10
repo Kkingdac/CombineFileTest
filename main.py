@@ -78,7 +78,7 @@ if __name__ == '__main__':
         else:
             print('Combining OS JE')
         finally:
-            df.to_excel(f'{result_path}{timestamp}-{file_name}.xlsx', index=False)
+            df.to_excel(f'{result_path}{file_name}-OSJE{timestamp}.xlsx', index=False)
             print('Combine Complete')
     csv_data = []
     for file in tqdm(get_files(convert_folder=csv_to_excel, result_folder=result_path, backup_folder=backup_path)):
