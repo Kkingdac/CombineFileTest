@@ -50,16 +50,6 @@ jobs:
 #          echo "::set-output name=labels::$labels"
 
 
-#  test:
-#    needs: Get-Tag
-#    strategy:
-#      matrix:
-#        os: [ ubuntu-latest ]
-#    runs-on: ${{ matrix.os }}
-#    steps:
-#      - run: |
-#          echo ${{ github.event.pull_request.labels }}
-
   Build:
     strategy:
       matrix:
