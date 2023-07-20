@@ -93,7 +93,7 @@ if __name__ == '__main__':
                     shutil.copy(f'{template}template.xlsx', target_file)
                     with pd.ExcelWriter(target_file, mode='a', if_sheet_exists='overlay') as writer:
                         df.to_excel(writer, startrow=line, sheet_name='OS Template', index=False, header=False)
-                case 'Multi-Dim':
+                case 'M_Dim':
                     df.to_excel(target_file, index=False)
             print('Combine Complete')
     csv_data = []
