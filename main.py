@@ -79,17 +79,17 @@ if __name__ == '__main__':
             df = df[~df['Entity'].str.contains('Unknown')]
             # df = df.drop(columns=remove_columns)
         except KeyError:
-            filetype = 'Multi-Dim'
+            filetype = 'M_Dim'
             print('Combining Multi-Dim')
             pass
         else:
-            filetype = 'OS JE'
+            filetype = 'OS_JE'
             line = 25
             print('Combining OS JE')
         finally:
             target_file = f'{result_path}{filetype}-{file_name}-{timestamp}.xlsx'
             match filetype:
-                case 'OS JE':
+                case 'OS_JE':
                     shutil.copy(f'{template}template.xlsx', target_file)
                     with pd.ExcelWriter(target_file, mode='a', if_sheet_exists='overlay') as writer:
                         df.to_excel(writer, startrow=line, sheet_name='OS Template', index=False, header=False)
@@ -104,5 +104,5 @@ if __name__ == '__main__':
         shutil.move(f'{csv_to_excel}{file}', f'{backup_path}{timestamp}-{file}')
     if csv_data:
         print('Convert Start')
-        pd.concat(csv_data, axis=0).to_excel(f'{result_path}M_Dim{file_name}-{timestamp}.xlsx', index=False)
+        pd.concat(csv_data, axis=0).to_excel(f'{result_path}M_Dim-{file_name}-{timestamp}.xlsx', index=False)
         print('Convert Complete')
