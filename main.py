@@ -1,4 +1,5 @@
 import datetime
+import sys
 from configparser import ConfigParser
 import os
 import shutil
@@ -10,30 +11,30 @@ import warnings
 warnings.filterwarnings("ignore", category=UserWarning)
 
 
-def create_ini() -> None:
-    con = ConfigParser()
-    con['config'] = {
-        'convert_path': './Combine/',
-        'result_path': './Result/',
-        'backup_path': './Backup/',
-        'csv_to_excel': './CsvToExcel(M_Dim)/',
-        'start_line': '24',
-        'result_name': 'Result'
-    }
-    with open('./config.ini', 'w', encoding='utf-8') as config_file:
-        con.write(config_file)
+def release(init_file: str, folder: str) -> None:
+    base_path = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+    source_excel_file = os.path.join(base_path, init_file)
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+    if not os.path.exists(os.path.join(folder, init_file)):
+        shutil.copy(source_excel_file, folder)
+
+
+def init() -> None:
+    release('config.ini', './')
+    release('template.xlsx', './Template/')
 
 
 def config(key: str) -> str:
     config_file = './config.ini'
     con = ConfigParser()
     if not os.path.exists(config_file):
-        create_ini()
+        init()
     con.read(config_file)
     try:
         con['config'][key]
     except KeyError:
-        create_ini()
+        init()
         con.read(config_file)
     finally:
         return con['config'][key]
@@ -50,12 +51,14 @@ def get_files(convert_folder: str, result_folder: str, backup_folder: str) -> li
 
 
 if __name__ == '__main__':
+    init()
     convert_path = config('convert_path')
     result_path = config('result_path')
     backup_path = config('backup_path')
     csv_to_excel = config('csv_to_excel')
     start_line = int(config('start_line'))
     file_name = config('result_name')
+    template = config('template_path')
     content = []
     remove_columns = ['Source Id']
     timestamp = datetime.datetime.now().strftime('%y%m%d%H%M%S')
@@ -68,18 +71,30 @@ if __name__ == '__main__':
     if content:
         print('Combine Start')
         df = pd.concat(content, axis=0)
+        filetype = ''
+        line = 0
         try:
             df['Entity'] = df['Entity'].fillna('Unknown')
             df = df[~df['Entity'].str.contains('E#')]
             df = df[~df['Entity'].str.contains('Unknown')]
             # df = df.drop(columns=remove_columns)
         except KeyError:
+            filetype = 'Multi-Dim'
             print('Combining Multi-Dim')
             pass
         else:
+            filetype = 'OS JE'
+            line = 25
             print('Combining OS JE')
         finally:
-            df.to_excel(f'{result_path}{file_name}-OSJE{timestamp}.xlsx', index=False)
+            target_file = f'{result_path}{filetype}-{file_name}-{timestamp}.xlsx'
+            match filetype:
+                case 'OS JE':
+                    shutil.copy(f'{template}template.xlsx', target_file)
+                    with pd.ExcelWriter(target_file, mode='a', if_sheet_exists='overlay') as writer:
+                        df.to_excel(writer, startrow=line, sheet_name='OS Template', index=False, header=False)
+                case 'Multi-Dim':
+                    df.to_excel(target_file, index=False)
             print('Combine Complete')
     csv_data = []
     for file in tqdm(get_files(convert_folder=csv_to_excel, result_folder=result_path, backup_folder=backup_path)):
