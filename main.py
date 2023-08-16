@@ -51,6 +51,7 @@ def get_files(convert_folder: str, result_folder: str, backup_folder: str) -> li
 
 
 if __name__ == '__main__':
+    # initialize variables
     init()
     convert_path = config('convert_path')
     result_path = config('result_path')
@@ -62,12 +63,22 @@ if __name__ == '__main__':
     content = []
     remove_columns = ['Source Id']
     timestamp = datetime.datetime.now().strftime('%y%m%d%H%M%S')
+    csv_data = []
+    template_sheet = config('OSJE_Template_Sheet')
+    # combine excel files
     for file in tqdm(get_files(convert_folder=convert_path, result_folder=result_path, backup_folder=backup_path)):
+        keys = pd.read_excel(f'{convert_path}{file}', sheet_name=None, engine='openpyxl').keys()
+        details, sheet_name = [pd.read_excel(f'{convert_path}{file}', sheet_name=template_sheet,
+                                             engine='openpyxl'), template_sheet] \
+            if template_sheet in keys \
+            else [pd.read_excel(f'{convert_path}{file}', engine='openpyxl'), 0]
         line = 0 \
-            if pd.read_excel(f'{convert_path}{file}', engine='openpyxl').head(0).columns[0] == 'ProfileName' \
+            if details.head(0).columns[0] == 'ProfileName' \
             else start_line
-        content.append(pd.read_excel(f'{convert_path}{file}', header=line, engine='openpyxl'))
+        content.append(pd.read_excel(f'{convert_path}{file}', header=line, sheet_name=sheet_name, engine='openpyxl'))
         shutil.move(f'{convert_path}{file}', f'{backup_path}{timestamp}-{file}')
+        print(file)
+        print(content)
     if content:
         print('Combine Start')
         df = pd.concat(content, axis=0)
@@ -96,7 +107,7 @@ if __name__ == '__main__':
                 case 'M_Dim':
                     df.to_excel(target_file, index=False)
             print('Combine Complete')
-    csv_data = []
+    # convert csv to excel
     for file in tqdm(get_files(convert_folder=csv_to_excel, result_folder=result_path, backup_folder=backup_path)):
         with open(f'{csv_to_excel}{file}', 'rb') as csv_file:
             encode = chardet.detect(csv_file.read())['encoding']
