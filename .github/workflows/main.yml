@@ -52,7 +52,7 @@ jobs:
         id: upload_release_to_sharepoint
         run: |
           python UploadFileToSP.py
-        with:
+        env:
           FILEPATH: ./dist/Combiner-${{ github.ref_name }}.exe
           FILENAME: Combiner-${{ github.ref_name }}.exe
           SP_URL: ${{ vars.SP_URL }}
