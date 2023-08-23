@@ -13,9 +13,9 @@ jobs:
         python-version: [ 3.11 ]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
@@ -48,3 +48,15 @@ jobs:
           asset_path: ./dist/Combiner-${{ github.ref_name }}.exe
           asset_name: Combiner-${{ github.ref_name }}.exe
           asset_content_type: application/octet-stream
+      - name: Upload Release To SharePoint
+        id: upload_release_to_sharepoint
+        run: |
+          python UploadFileToSP.py
+        with:
+          FILEPATH: ./dist/Combiner-${{ github.ref_name }}.exe
+          FILENAME: Combiner-${{ github.ref_name }}.exe
+          SP_URL: ${{ vars.SP_URL }}
+          SP_USERNAME: ${{ vars.SP_USERNAME }}
+          SP_PASSWORD: ${{ secrets.SP_PASSWORD }}
+          SP_SITE: ${{ vars.SP_SITE }}
+          SP_FOLDER: ${{ vars.SP_FOLDER }}
