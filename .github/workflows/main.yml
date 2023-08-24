@@ -20,10 +20,15 @@ jobs:
           echo "${{ github.event.pull_request.labels[0].name }}"
       - name: Get Tag
         id: tag
-        uses: devops-actions/action-get-tag@v1.0.2
+        uses: actions/github-script@v4
         with:
-          strip_v: true
-          default: v0.0.0
+          script: |
+            const { data } = await github.repos.getLatestRelease({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+            });
+            console.log(data.tag_name);
+            core.setOutput("tag", data.tag_name);
       - run: |
           echo "${{ steps.tag.outputs.tag }}"
 #      - name: Set up Python ${{ matrix.python-version }}
