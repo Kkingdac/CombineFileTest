@@ -1,9 +1,11 @@
 name: Build EXE
 
 on:
-  push:
-    tags:
-      - 'v*'
+  pull_request:
+    branches:
+      - master
+    types:
+      - closed
 
 jobs:
   Build:
@@ -14,49 +16,51 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-      - name: Build executable
-        run: |
-          pyinstaller -F -i merge-cells.ico -n Combiner-${{ github.ref_name }} --add-data ".\template.xlsx;." --add-data ".\config.ini;." main.py
-        env:
-          PYTHONPATH: ${{ env.PYTHONPATH }}
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.Token }}
-        with:
-          tag_name: ${{ github.ref_name }}
-          release_name: Combiner-${{ github.ref_name }}
-          body: ${{ github.event.head_commit.message }}
-          draft: false
-          prerelease: false
-      - name: Upload Release Asset
-        id: upload_release_asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.Token }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/Combiner-${{ github.ref_name }}.exe
-          asset_name: Combiner-${{ github.ref_name }}.exe
-          asset_content_type: application/octet-stream
-      - name: Upload Release To SharePoint
-        id: upload_release_to_sharepoint
-        run: |
-          python UploadFileToSP.py
-        env:
-          FILEPATH: ./dist/Combiner-${{ github.ref_name }}.exe
-          FILENAME: Combiner-${{ github.ref_name }}.exe
-          SP_URL: ${{ vars.SP_URL }}
-          SP_USERNAME: ${{ vars.SP_USERNAME }}
-          SP_PASSWORD: ${{ secrets.SP_PASSWORD }}
-          SP_SITE: ${{ vars.SP_SITE }}
-          SP_FOLDER: ${{ vars.SP_FOLDER }}
+      - run: |
+          echo ${{ github.reg }}
+#      - name: Set up Python ${{ matrix.python-version }}
+#        uses: actions/setup-python@v4
+#        with:
+#          python-version: ${{ matrix.python-version }}
+#      - name: Install dependencies
+#        run: |
+#          python -m pip install --upgrade pip
+#          pip install -r requirements.txt
+#      - name: Build executable
+#        run: |
+#          pyinstaller -F -i merge-cells.ico -n Combiner-${{ github.ref_name }} --add-data ".\template.xlsx;." --add-data ".\config.ini;." main.py
+#        env:
+#          PYTHONPATH: ${{ env.PYTHONPATH }}
+#      - name: Create Release
+#        id: create_release
+#        uses: actions/create-release@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.Token }}
+#        with:
+#          tag_name: ${{ github.ref_name }}
+#          release_name: Combiner-${{ github.ref_name }}
+#          body: ${{ github.event.head_commit.message }}
+#          draft: false
+#          prerelease: false
+#      - name: Upload Release Asset
+#        id: upload_release_asset
+#        uses: actions/upload-release-asset@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.Token }}
+#        with:
+#          upload_url: ${{ steps.create_release.outputs.upload_url }}
+#          asset_path: ./dist/Combiner-${{ github.ref_name }}.exe
+#          asset_name: Combiner-${{ github.ref_name }}.exe
+#          asset_content_type: application/octet-stream
+#      - name: Upload Release To SharePoint
+#        id: upload_release_to_sharepoint
+#        run: |
+#          python UploadFileToSP.py
+#        env:
+#          FILEPATH: ./dist/Combiner-${{ github.ref_name }}.exe
+#          FILENAME: Combiner-${{ github.ref_name }}.exe
+#          SP_URL: ${{ vars.SP_URL }}
+#          SP_USERNAME: ${{ vars.SP_USERNAME }}
+#          SP_PASSWORD: ${{ secrets.SP_PASSWORD }}
+#          SP_SITE: ${{ vars.SP_SITE }}
+#          SP_FOLDER: ${{ vars.SP_FOLDER }}
