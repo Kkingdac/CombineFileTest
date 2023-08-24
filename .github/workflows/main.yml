@@ -24,11 +24,11 @@ jobs:
         with:
           result-encoding: string
           script: |
-            const { data } = await github.repos.listReleases({
+            const { data } = await github.repos.listTags({
               owner: context.repo.owner,
               repo: context.repo.repo,
             });
-            return data[0].tag_name;
+            return data.data[0].name;
       - run: |
           echo "${{ steps.tag.outputs.result }}"
 #      - name: Set up Python ${{ matrix.python-version }}
