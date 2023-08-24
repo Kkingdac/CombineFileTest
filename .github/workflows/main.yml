@@ -23,6 +23,7 @@ jobs:
         uses: devops-actions/action-get-tag@v1.0.2
         with:
           strip_v: true
+          default: v0.0.0
       - run: |
           echo "${{ steps.tag.outputs.tag }}"
 #      - name: Set up Python ${{ matrix.python-version }}
