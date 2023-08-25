@@ -27,7 +27,7 @@ jobs:
       - name: Get New Tag
         id: tag
         run: |
-          python CalNewTag.py >> "$GITHUB_OUTPUT"
+          python CalNewTag.py
         env:
           TAGS_URL: ${{ github.event.repository.tags_url }}
           LABEL: ${{ github.event.pull_request.labels[0].name }}
