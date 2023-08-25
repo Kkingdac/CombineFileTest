@@ -31,7 +31,7 @@ jobs:
         run: |
           python CalNewTag.py
         env:
-          TAGS_URL: ${ github.event.repository.tags_url }
+          TAGS_URL: ${{ github.event.repository.tags_url }}
           LABEL: ${{ github.event.pull_request.labels[0].name }}
       - run: |
           echo ${{ steps.tag.outputs.result }}
