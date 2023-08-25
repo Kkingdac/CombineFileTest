@@ -29,12 +29,13 @@ jobs:
       - name: Get New Tag
         id: tag
         run: |
-          python CalNewTag.py
+          result=$(python CalNewTag.py)
+          echo "::set-output name=tag::$result"
         env:
           TAGS_URL: ${{ github.event.repository.tags_url }}
           LABEL: ${{ github.event.pull_request.labels[0].name }}
       - run: |
-          echo ${{ steps.tag.outputs.result }}
+          echo ${{ steps.tag.outputs.tag }}
 
 #      - name: Build executable
 #        run: |
