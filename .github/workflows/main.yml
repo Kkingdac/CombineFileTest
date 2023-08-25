@@ -13,11 +13,13 @@ jobs:
       matrix:
         os: [ windows-latest ]
         python-version: [ 3.11 ]
+        tag: ${{ steps.tag.outputs.tag }}
+        label: ${{ github.event.pull_request.labels[0].name }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
       - run: |
-          echo "${{ github.event.pull_request.labels[0].name }}"
+          echo "${{ matrix.label }}"
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
@@ -34,7 +36,7 @@ jobs:
           TAGS_URL: ${{ github.event.repository.tags_url }}
           LABEL: ${{ github.event.pull_request.labels[0].name }}
       - run: |
-          echo ${{ steps.tag.outputs.tag }}
+          echo ${{ matrix.tag }}
 
 #      - name: Build executable
 #        run: |
