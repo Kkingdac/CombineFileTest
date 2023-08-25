@@ -22,4 +22,4 @@ class Tag:
 
 
 if __name__ == '__main__':
-    print(f'tag={Tag().cal_new_tag()} >> $GITHUB_OUTPUT')
+    print(f'tag={Tag().cal_new_tag()}')
