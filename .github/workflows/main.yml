@@ -30,7 +30,6 @@ jobs:
         id: tag
         run: |
           python CallNewTag.py
-        capture: ${{ steps.tag.outputs.result }}
         env:
           TAGS_URL: ${ github.event.repository.tags_url }
           LABEL: ${{ github.event.pull_request.labels[0].name }}
