@@ -29,16 +29,16 @@ jobs:
       - name: Get New Tag
         id: tag
         run: |
-          result = $(python CalNewTag.py)
-          echo "::set-output name=tag::$result"
+          python CalNewTag.py
         env:
           TAGS_URL: ${{ github.event.repository.tags_url }}
           LABEL: ${{ github.event.pull_request.labels[0].name }}
       - run: |
-          echo ${{ steps.tag.outputs.tag }}
+          echo ${{ steps.tag.outputs.result }}
 
 #      - name: Build executable
 #        run: |
+
 #          pyinstaller -F -i merge-cells.ico -n Combiner-${{ github.ref_name }} --add-data ".\template.xlsx;." --add-data ".\config.ini;." main.py
 #        env:
 #          PYTHONPATH: ${{ env.PYTHONPATH }}

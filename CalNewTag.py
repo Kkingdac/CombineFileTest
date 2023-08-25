@@ -21,4 +21,4 @@ class Tag:
 
 
 if __name__ == '__main__':
-    print(Tag().cal_new_tag())
+    Tag().cal_new_tag()
