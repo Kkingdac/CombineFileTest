@@ -34,7 +34,7 @@ jobs:
           TAGS_URL: ${{ github.event.repository.tags_url }}
           LABEL: ${{ github.event.pull_request.labels[0].name }}
       - run: |
-          echo ${{ steps.tag.outputs.result }}
+          echo ${{ steps.tag.outputs.tag }}
 
 #      - name: Build executable
 #        run: |
