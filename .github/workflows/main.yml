@@ -27,47 +27,47 @@ jobs:
       - name: Get New Tag
         id: tag
         run: |
-          python CalNewTag.py >> "$GITHUB_OUTPUT"
+          python CalNewTag.py
         env:
           TAGS_URL: ${{ github.event.repository.tags_url }}
           LABEL: ${{ github.event.pull_request.labels[0].name }}
       - run: |
           echo ${{ steps.tag.outputs.tag }}
-#      - name: Build executable
-#        run: |
-#          pyinstaller -F -i merge-cells.ico -n Combiner-${{ steps.tag.outputs.tag }} --add-data ".\template.xlsx;." --add-data ".\config.ini;." main.py
-#        env:
-#          PYTHONPATH: ${{ env.PYTHONPATH }}
-#      - name: Create Release
-#        id: create_release
-#        uses: actions/create-release@v1
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.Token }}
-#        with:
-#          tag_name: ${{ steps.tag.outputs.tag }}
-#          release_name: Combiner-${{ steps.tag.outputs.tag }}
-#          body: ${{ github.event.head_commit.message }}
-#          draft: false
-#          prerelease: false
-#      - name: Upload Release Asset
-#        id: upload_release_asset
-#        uses: actions/upload-release-asset@v1
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.Token }}
-#        with:
-#          upload_url: ${{ steps.create_release.outputs.upload_url }}
-#          asset_path: ./dist/Combiner-${{ steps.tag.outputs.tag }}.exe
-#          asset_name: Combiner-${{ steps.tag.outputs.tag }}.exe
-#          asset_content_type: application/octet-stream
-#      - name: Upload Release To SharePoint
-#        id: upload_release_to_sharepoint
-#        run: |
-#          python UploadFileToSP.py
-#        env:
-#          FILEPATH: ./dist/Combiner-${{ steps.tag.outputs.tag }}.exe
-#          FILENAME: Combiner-${{ steps.tag.outputs.tag }}.exe
-#          SP_URL: ${{ vars.SP_URL }}
-#          SP_USERNAME: ${{ vars.SP_USERNAME }}
-#          SP_PASSWORD: ${{ secrets.SP_PASSWORD }}
-#          SP_SITE: ${{ vars.SP_SITE }}
-#          SP_FOLDER: ${{ vars.SP_FOLDER }}
+      - name: Build executable
+        run: |
+          pyinstaller -F -i merge-cells.ico -n Combiner-${{ steps.tag.outputs.tag }} --add-data ".\template.xlsx;." --add-data ".\config.ini;." main.py
+        env:
+          PYTHONPATH: ${{ env.PYTHONPATH }}
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.Token }}
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          release_name: Combiner-${{ steps.tag.outputs.tag }}
+          body: ${{ github.event.head_commit.message }}
+          draft: false
+          prerelease: false
+      - name: Upload Release Asset
+        id: upload_release_asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.Token }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./dist/Combiner-${{ steps.tag.outputs.tag }}.exe
+          asset_name: Combiner-${{ steps.tag.outputs.tag }}.exe
+          asset_content_type: application/octet-stream
+      - name: Upload Release To SharePoint
+        id: upload_release_to_sharepoint
+        run: |
+          python UploadFileToSP.py
+        env:
+          FILEPATH: ./dist/Combiner-${{ steps.tag.outputs.tag }}.exe
+          FILENAME: Combiner-${{ steps.tag.outputs.tag }}.exe
+          SP_URL: ${{ vars.SP_URL }}
+          SP_USERNAME: ${{ vars.SP_USERNAME }}
+          SP_PASSWORD: ${{ secrets.SP_PASSWORD }}
+          SP_SITE: ${{ vars.SP_SITE }}
+          SP_FOLDER: ${{ vars.SP_FOLDER }}
