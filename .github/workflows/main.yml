@@ -13,6 +13,7 @@ jobs:
       matrix:
         os: [ windows-latest ]
         python-version: [ 3.11 ]
+        tag: ${{ steps.tag.outputs.result }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
@@ -29,11 +30,14 @@ jobs:
       - name: Get New Tag
         id: tag
         run: |
-          output=$(python CallNewTag.py)
-          echo "::set-output name=tag::${output}"
+          python CallNewTag.py
+        capture: ${{ steps.tag.outputs.result }}
         env:
           TAGS_URL: ${ github.event.repository.tags_url }
           LABEL: ${{ github.event.pull_request.labels[0].name }}
+      - run: |
+          echo ${{ matrix.tag }}
+
 #      - name: Build executable
 #        run: |
 #          pyinstaller -F -i merge-cells.ico -n Combiner-${{ github.ref_name }} --add-data ".\template.xlsx;." --add-data ".\config.ini;." main.py
