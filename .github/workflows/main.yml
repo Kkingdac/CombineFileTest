@@ -29,7 +29,7 @@ jobs:
       - name: Get New Tag
         id: tag
         run: |
-          output=${python CallNewTag.py}
+          output=$(python CallNewTag.py)
           echo "::set-output name=tag::${output}"
         env:
           TAGS_URL: ${ github.event.repository.tags_url }
