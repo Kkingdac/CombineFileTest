@@ -22,4 +22,4 @@ class Tag:
 
 
 if __name__ == '__main__':
-    print(Tag().cal_new_tag())
+    print(f'::set-output name=tag::{Tag().cal_new_tag()}')
